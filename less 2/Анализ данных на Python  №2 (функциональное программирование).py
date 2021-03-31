@@ -82,7 +82,7 @@ for p in permutations("ABC"):
     print(p)
     print(*p)
 
-file = open("text.txt", "w")
+file = open("../text.txt", "w")
 
 l = [str(i) + str(i - 1) for i in range(20)]
 for index in l:
