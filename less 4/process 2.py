@@ -24,20 +24,33 @@ def main():
         tasks.put(n)
 
     workers = []  # процессы
-    for process_index in range(workers_number):
+    for process_index in range(workers_number):  # в качестве парамметров функции передаем очереди
         worker_process = Process(target=worker, args=(tasks, answers, process_index,))
         workers.append(worker_process)
         print("prepared workers processes")
 
-        start_time = time.perf_counter()
-        for worker_process in workers:
-            worker_process.start()
-        print("started workers processes")
+    start_time = time.perf_counter()
+    for worker_process in workers:
+        worker_process.start()
+    print("started workers processes")
 
-        for worker_process in workers:
-            worker_process.join()
-        finish_time = time.perf_counter()
-        print("all", finish_time - start_time)
+    for worker_process in workers:
+        worker_process.join()
+    # тут мы выходим из режима многозадачности. Рабоает один родительсякий процесс
+    finish_time = time.perf_counter()
+    print("all", finish_time - start_time)
+
+    # Отладочная распечатка результатов
+    ordered_answers = []
+    while not answers.empty():
+        process_index, PID, number, answer = answers.get() # PID -айди процесса
+        ordered_answers.append((number, answer,))
+        print(f" worker {process_index}, PID = {PID}: fib({number}) = {answer}")
+
+    # красивая распечатка полученных результатов
+    ordered_answers.sort()
+    print(*(answer for number, answer in ordered_answers))
+
 
 
 if __name__ == '__main__':

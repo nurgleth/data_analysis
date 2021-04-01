@@ -25,15 +25,15 @@ def main():
         workers.append(worker_process)
         print("prepared workers processes")
 
-        start_time = time.perf_counter()
-        for worker_process in workers:
-            worker_process.start()
-        print("started workers processes")
+    start_time = time.perf_counter()
+    for worker_process in workers:
+        worker_process.start()
+    print("started workers processes")
 
-        for worker_process in workers:
-            worker_process.join()
-        finish_time = time.perf_counter()
-        print("all", finish_time - start_time)
+    for worker_process in workers:
+        worker_process.join()
+    finish_time = time.perf_counter()
+    print("all", finish_time - start_time)
 
 
 if __name__ == '__main__':
