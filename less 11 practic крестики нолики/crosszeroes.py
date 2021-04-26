@@ -4,6 +4,7 @@ from enum import Enum
 
 import pygame
 
+FPS = 60
 CELL_SIZE = 50  # размер кристиков и ноликов
 
 class Cell(Enum):
@@ -26,7 +27,10 @@ class Player:
 
 
 class GameField:
-    pass
+    def __init__(self):
+        self._height = 3
+        self._width = 3
+        self.cells = [[Cell.VOID] * self._width for i in range(self._height)]
 
 
 class GameFieldView:
@@ -51,7 +55,7 @@ class GameFieldView:
         return True  # TODO: self._height учесть
 
     def get_coords(self, x, y):  # вычислить координаты
-        return (0, 0)  # TODO: реально вычислить
+        return 0, 0  # TODO: реально вычислить
 
 class GameRoundManager:
     """
@@ -61,11 +65,11 @@ class GameRoundManager:
     def __init__(self, player1: Player, player2: Player):
         self._player = [player1, player2]
         self._current_player = 0
-        self._field = GameField()  # создаем поле
+        self.field = GameField()  # создаем поле
 
-    def handle_click(self):
+    def handle_click(self, i, j):
         player = self._player[self._current_player]  # взять текущего игрока
-        pass
+        print("clock_handler", i, j)
 
 
 class GameWindow:
@@ -75,20 +79,40 @@ class GameWindow:
 
     def __init__(self):
         #  иницилизацпия pygame
-        self._field_widget = GameFieldView  # вещи для создание поля
-        player1 = Player(Cell.CROSS)  # создаем игроков
-        player2 = Player(Cell.ZERO)  # создаем игроков
+        pygame.init()
+        #  Window
+        self._height = 800
+        self._width = 600
+        self._title = "Crosses and Zeroes"
+        self._screen = pygame.display.set_mode((self._width, self._height))
+        pygame.display.set_caption(self._title)
+
+        player1 = Player(str(input()), Cell.CROSS)  # создаем игроков
+        player2 = Player(str(input()), Cell.ZERO)  # создаем игроков
         self._game_manager = GameRoundManager(player1, player2)  # создаем менедженра раундов
+        self._field_widget = GameFieldView(self._game_manager.field)  # вещи для создание поля
 
     def main_loop(self):  # главный цикл программы
         finished = False
+        clock = pygame.time.Clock()  # пишем время до цикла
         while not finished:
-            for event in pygame.ge:
+            for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     finished = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # клик по полю
                     x, y = event.x, event.y  # сохроняем координаты клика
-
                     if self._field_widget.check_coords_correct(x, y):  # если координаты корретны
                         i, j = self._field_widget.get_coords(x, y)  # передаем их и вытаскиваем их в массиве
                         self._game_manager.handle_click(i, j)  # передаем это событие гейм менеджеру
+            pygame.display.flip()
+            clock.tick(FPS)
+
+
+def main():
+    window = GameWindow()
+    window.main_loop()
+    print("Game over!")
+
+
+if __name__ == "__main__":
+    main()
