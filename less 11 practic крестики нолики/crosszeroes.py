@@ -100,7 +100,8 @@ class GameWindow:
                 if event.type == pygame.QUIT:
                     finished = True
                 elif event.type == pygame.MOUSEBUTTONDOWN:  # клик по полю
-                    x, y = event.x, event.y  # сохроняем координаты клика
+                    mouse_pos = pygame.mouse.get_pos()  # сохроняем координаты клика
+                    x, y = mouse_pos
                     if self._field_widget.check_coords_correct(x, y):  # если координаты корретны
                         i, j = self._field_widget.get_coords(x, y)  # передаем их и вытаскиваем их в массиве
                         self._game_manager.handle_click(i, j)  # передаем это событие гейм менеджеру
